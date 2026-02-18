@@ -1,0 +1,25 @@
+.player-wrapper {
+  padding: 20px;
+}
+
+.video-stage {
+  position: relative;
+  width: 900px;
+}
+
+.main video {
+  width: 900px;
+  height: auto;
+}
+
+.pip {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 250px;
+  cursor: pointer;
+}
+
+.pip video {
+  width: 100%;
+}
