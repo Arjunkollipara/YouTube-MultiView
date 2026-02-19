@@ -1,9 +1,9 @@
 import useMediaCapture from "./core/useMediaCapture";
 import useDualRecorder from "./core/useDualRecorder";
 import DualPreview from "./components/DualPlayback";
+import "./App.css";
 
 function App() {
-  // Phase 1 — Capture
   const {
     cameraStream,
     screenStream,
@@ -13,37 +13,75 @@ function App() {
     error,
   } = useMediaCapture();
 
-  // Phase 2 — Recording
-  const {
-    isRecording,
-    startRecording,
-    stopRecording,
-  } = useDualRecorder(cameraStream, screenStream);
+  const { isRecording, startRecording, stopRecording } = useDualRecorder(
+    cameraStream,
+    screenStream
+  );
+
+  const captureButton = !isCapturing
+    ? {
+        label: "Start Capture",
+        action: startCapture,
+        className: "btn btn-primary",
+      }
+    : {
+        label: "Stop Capture",
+        action: stopCapture,
+        className: "btn btn-danger",
+      };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Dual Stream Recording Framework</h1>
+    <div className="app-shell">
+      <main className="app-panel">
+        <header className="app-header">
+          <p className="eyebrow">Dual Stream Tool</p>
+          <h1>Record Camera + Screen</h1>
+          <p className="subtitle">
+            Start capture first, then record both feeds in parallel.
+          </p>
+        </header>
 
-      {!isCapturing ? (
-        <button onClick={startCapture}>Start Capture</button>
-      ) : (
-        <button onClick={stopCapture}>Stop Capture</button>
-      )}
+        <section className="status-row" aria-label="Current status">
+          <div className={`status-card ${isCapturing ? "on" : "off"}`}>
+            <span>Capture</span>
+            <strong>{isCapturing ? "Active" : "Idle"}</strong>
+          </div>
+          <div className={`status-card ${isRecording ? "recording" : "off"}`}>
+            <span>Recording</span>
+            <strong>{isRecording ? "Running" : "Stopped"}</strong>
+          </div>
+        </section>
 
-      {isCapturing && !isRecording && (
-        <button onClick={startRecording}>Start Recording</button>
-      )}
+        <section className="controls" aria-label="Capture controls">
+          <button className={captureButton.className} onClick={captureButton.action}>
+            {captureButton.label}
+          </button>
 
-      {isRecording && (
-        <button onClick={stopRecording}>Stop Recording</button>
-      )}
+          {isCapturing && !isRecording && (
+            <button className="btn btn-secondary" onClick={startRecording}>
+              Start Recording
+            </button>
+          )}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+          {isRecording && (
+            <button className="btn btn-danger" onClick={stopRecording}>
+              Stop Recording
+            </button>
+          )}
+        </section>
 
-      <DualPreview
-        cameraStream={cameraStream}
-        screenStream={screenStream}
-      />
+        <p className="help-text">
+          Tip: Click the smaller preview window to swap camera and screen.
+        </p>
+
+        {error && (
+          <p className="error-banner" role="alert">
+            {error}
+          </p>
+        )}
+
+        <DualPreview cameraStream={cameraStream} screenStream={screenStream} />
+      </main>
     </div>
   );
 }

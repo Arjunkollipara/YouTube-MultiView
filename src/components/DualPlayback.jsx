@@ -33,16 +33,32 @@ export default function DualPreview({ cameraStream, screenStream }) {
     );
   };
 
+  const handlePipKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleSwap();
+    }
+  };
+
   return (
     <div className="preview-container">
-      {/* MAIN LARGE */}
       <div className="large">
         <video ref={mainRef} autoPlay playsInline muted />
+        <span className="stream-badge">
+          {mainSource === "camera" ? "Camera View" : "Screen View"}
+        </span>
       </div>
 
-      {/* PIP SMALL */}
-      <div className="pip" onClick={handleSwap}>
+      <div
+        className="pip"
+        onClick={handleSwap}
+        onKeyDown={handlePipKeyDown}
+        role="button"
+        tabIndex={0}
+        title="Swap camera and screen"
+      >
         <video ref={secondaryRef} autoPlay playsInline muted />
+        <span className="pip-label">Swap</span>
       </div>
     </div>
   );
